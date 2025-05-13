@@ -1,7 +1,11 @@
+import { gameState } from './gameData.js';
+import { MechanicsManager } from './mechanicsManager.js';
+
 export class Start extends Phaser.Scene {
 
     constructor() {
         super('Start');
+        this.mechanicsManager = null; // Will be initialized in create
     }
 
     preload() {
@@ -36,10 +40,19 @@ export class Start extends Phaser.Scene {
             yoyo: true,
             loop: -1
         });
+
+        // Initialize Mechanics Manager
+        this.mechanicsManager = new MechanicsManager();
+        gameState.combat.isCombatActive = true; // Start combat when the scene is created
     }
 
-    update() {
+    update(time, delta) {
         this.background.tilePositionX += 2;
+
+        // Update game mechanics using the Mechanics Manager
+        if (this.mechanicsManager) {
+            this.mechanicsManager.update(delta);
+        }
     }
-    
+
 }
