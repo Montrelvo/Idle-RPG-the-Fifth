@@ -1,77 +1,83 @@
 // src/mechanicsManager.js
 
-import { gameState } from './gameData.js';
+import gameState from './gameData.js';
 
 /**
  * Manages the game's automated mechanics, such as resource generation and combat.
  */
-export class MechanicsManager {
-
-    constructor() {
-        this.resourceGenerationTimer = 0;
-        this.combatTimer = 0;
-        this.generationInterval = 1000; // Generate resources every 1000ms (1 second)
-        this.combatInterval = 2000; // Combat tick every 2000ms (2 seconds)
+class MechanicsManager {
+    constructor(scene) {
+        this.scene = scene;
+        this.resourceGenerationRate = {
+            gold: 0.1, // Gold per second
+            wood: 0.05, // Wood per second
+            stone: 0.02, // Stone per second
+            // Define rates for other resources here
+        };
     }
 
     /**
-     * Updates the game mechanics based on the elapsed time.
+     * Updates game mechanics based on the elapsed time.
      * @param {number} delta - The time elapsed since the last frame in milliseconds.
      */
     update(delta) {
-        this.updateResources(delta);
-        this.runCombatTick(delta);
+        // Convert delta from milliseconds to seconds
+        const deltaInSeconds = delta / 1000;
+
+        this.updateResources(deltaInSeconds);
+        this.runCombatTick(deltaInSeconds); // Implement combat later
     }
 
     /**
-     * Handles resource generation over time.
-     * @param {number} delta - The time elapsed since the last frame in milliseconds.
+     * Updates resource amounts based on generation rates.
+     * @param {number} deltaInSeconds - The time elapsed in seconds.
      */
-    updateResources(delta) {
-        this.resourceGenerationTimer += delta;
-
-        if (this.resourceGenerationTimer >= this.generationInterval) {
-            gameState.resources.gold += 1;
-            console.log('Gold:', gameState.resources.gold); // Log for now
-            this.resourceGenerationTimer -= this.generationInterval;
-        }
-    }
-
-    /**
-     * Runs a combat tick if combat is active.
-     * @param {number} delta - The time elapsed since the last frame in milliseconds.
-     */
-    runCombatTick(delta) {
-        if (gameState.combat.isCombatActive) {
-            this.combatTimer += delta;
-
-            if (this.combatTimer >= this.combatInterval) {
-                // Player attacks enemy
-                gameState.currentEnemy.health -= gameState.playerStats.attack;
-                console.log('Enemy Health:', gameState.currentEnemy.health);
-
-                // Check if enemy is defeated
-                if (gameState.currentEnemy.health <= 0) {
-                    console.log('Enemy Defeated!');
-                    gameState.combat.isCombatActive = false;
-                    // Implement rewards and potentially spawn a new enemy here
-                } else {
-                    // Enemy attacks player (if enemy is not defeated)
-                    gameState.playerStats.health -= gameState.currentEnemy.attack;
-                    console.log('Player Health:', gameState.playerStats.health);
-
-                    // Check if player is defeated
-                    if (gameState.playerStats.health <= 0) {
-                        console.log('Player Defeated!');
-                        gameState.combat.isCombatActive = false;
-                        // Implement game over or respawn logic here
-                    }
-                }
-
-                this.combatTimer -= this.combatInterval;
+    updateResources(deltaInSeconds) {
+        for (const resource in this.resourceGenerationRate) {
+            if (gameState.resources.hasOwnProperty(resource)) {
+                gameState.resources[resource] += this.resourceGenerationRate[resource] * deltaInSeconds;
+                // Optional: Add logic to update UI display for this resource
+                // console.log(`${resource}: ${gameState.resources[resource].toFixed(2)}`); // For debugging
             }
         }
     }
 
-    // Add more methods here for other mechanics
+    /**
+     * Runs a combat tick to simulate automated combat.
+     * @param {number} deltaInSeconds - The time elapsed in seconds.
+     */
+    runCombatTick(deltaInSeconds) {
+        if (!gameState.isCombatActive) {
+            return;
+        }
+
+        // Simple combat logic: player and enemy attack each other simultaneously
+        const playerDamage = gameState.playerStats.attack * deltaInSeconds;
+        const enemyDamage = gameState.currentEnemy.enemyAttack * deltaInSeconds;
+
+        gameState.currentEnemy.enemyHealth -= playerDamage;
+        gameState.playerStats.health -= enemyDamage;
+
+        // Check for combat outcome
+        if (gameState.currentEnemy.enemyHealth <= 0) {
+            console.log("Player won the combat!");
+            gameState.isCombatActive = false;
+            // Implement rewards and transition to next state (e.g., next enemy, exploration)
+            // For now, just reset enemy health for demonstration
+            gameState.currentEnemy.enemyHealth = gameState.currentEnemy.maxEnemyHealth;
+            gameState.isCombatActive = true; // Start next combat immediately for demonstration
+        } else if (gameState.playerStats.health <= 0) {
+            console.log("Player lost the combat!");
+            gameState.isCombatActive = false;
+            // Implement game over or retreat logic
+            // For now, just reset player health for demonstration
+            gameState.playerStats.health = gameState.playerStats.maxHealth;
+            gameState.isCombatActive = true; // Restart combat immediately for demonstration
+        }
+
+        // Optional: Add logic to update UI display for health bars, combat log, etc.
+        // console.log(`Player Health: ${gameState.playerStats.health.toFixed(2)}, Enemy Health: ${gameState.currentEnemy.enemyHealth.toFixed(2)}`); // For debugging
+    }
 }
+
+export default MechanicsManager;

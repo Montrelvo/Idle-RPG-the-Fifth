@@ -2,42 +2,34 @@
 
 /**
  * Global game state object.
- * This object holds all the data related to the player's progress, resources,
- * enemy status, and other game-wide information.
+ * This object holds all the data related to the game's current state,
+ * including resources, player stats, enemy information, and other states.
  */
-export const gameState = {
-    // Resources
+const gameState = {
     resources: {
         gold: 0,
         wood: 0,
         stone: 0,
-        // Add more resources here as needed
+        // Add other resources here
     },
-
-    // Player stats
     playerStats: {
         attack: 1,
         defense: 0,
-        health: 10,
-        maxHealth: 10,
-        // Add more player stats here as needed
+        health: 100,
+        maxHealth: 100,
+        // Add other player stats here
     },
-
-    // Current enemy information
     currentEnemy: {
         name: "Goblin",
-        health: 5,
-        maxHealth: 5,
-        attack: 1,
-        // Add more enemy properties here as needed
+        enemyHealth: 50,
+        maxEnemyHealth: 50,
+        enemyAttack: 5,
+        // Add other enemy stats here
     },
-
-    // Combat state
-    combat: {
-        isCombatActive: false,
-        combatProgress: 0, // Could represent time or turns in combat
-        // Add more combat state properties here
-    },
-
-    // Add other game state properties here (e.g., upgrades, inventory, etc.)
+    isCombatActive: false,
+    combatProgress: 0, // Could represent time in combat tick or similar
+    // Add other game states here
 };
+
+// Export the gameState object so it can be accessed from other files
+export default gameState;
