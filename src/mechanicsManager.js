@@ -7,8 +7,8 @@ import gameState from './gameData.js';
  */
 class MechanicsManager {
     constructor(scene) {
-        this.scene = scene;
-        this.resourceGenerationRate = {
+       
+      this.resourceGenerationRate = {
             gold: 0.1, // Gold per second
             wood: 0.05, // Wood per second
             stone: 0.02, // Stone per second
