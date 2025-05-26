@@ -1,3 +1,4 @@
+import Phaser from '../phaser.js';
 import { Start } from './scenes/Start.js';
 import { GalaxyMap } from './scenes/GalaxyMap.js';
 
