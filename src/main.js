@@ -1,4 +1,5 @@
 import { Start } from './scenes/Start.js';
+import { GalaxyMap } from './scenes/GalaxyMap.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -10,7 +11,8 @@ const config = {
     backgroundColor: '#000000',
     pixelArt: false,
     scene: [
-        Start
+        Start,
+        GalaxyMap
     ],
     scale: {
         mode: Phaser.Scale.FIT,

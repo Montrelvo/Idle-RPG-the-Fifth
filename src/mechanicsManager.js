@@ -78,6 +78,41 @@ class MechanicsManager {
         // Optional: Add logic to update UI display for health bars, combat log, etc.
         // console.log(`Player Health: ${gameState.playerStats.health.toFixed(2)}, Enemy Health: ${gameState.currentEnemy.enemyHealth.toFixed(2)}`); // For debugging
     }
+
+    /**
+     * Saves the current game state to localStorage.
+     */
+    saveGame() {
+        try {
+            const serializedGameState = JSON.stringify(gameState);
+            localStorage.setItem('idleRpgSave', serializedGameState);
+            console.log("Game saved successfully!");
+        } catch (error) {
+            console.error("Error saving game:", error);
+        }
+    }
+
+    /**
+     * Loads the game state from localStorage.
+     * @returns {boolean} True if a game was loaded, false otherwise.
+     */
+    loadGame() {
+        try {
+            const serializedGameState = localStorage.getItem('idleRpgSave');
+            if (serializedGameState === null) {
+                console.log("No saved game found. Starting new game.");
+                return false;
+            }
+            const loadedState = JSON.parse(serializedGameState);
+            // Deep merge or replace gameState with loadedState
+            Object.assign(gameState, loadedState);
+            console.log("Game loaded successfully!");
+            return true;
+        } catch (error) {
+            console.error("Error loading game:", error);
+            return false;
+        }
+    }
 }
 
 export default MechanicsManager;

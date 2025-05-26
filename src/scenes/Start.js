@@ -43,6 +43,10 @@ export class Start extends Phaser.Scene {
 
         // Initialize Mechanics Manager
         this.mechanicsManager = new MechanicsManager(this); // Pass the scene instance
+
+        // Load game state
+        this.mechanicsManager.loadGame();
+        
         gameState.isCombatActive = true; // Start combat when the scene is created
 
         // Add UI elements
@@ -55,6 +59,20 @@ export class Start extends Phaser.Scene {
         this.playerHealthText = this.add.text(10, 100, 'Player Health: 100', uiTextStyle);
         this.enemyHealthText = this.add.text(10, 130, 'Enemy Health: 50', uiTextStyle);
         this.combatStatusText = this.add.text(10, 160, 'Combat: Active', uiTextStyle);
+
+        // Add Save Game button
+        const saveButton = this.add.text(10, 200, 'Save Game', { fontSize: '24px', fill: '#0f0' })
+            .setInteractive()
+            .on('pointerdown', () => {
+                this.mechanicsManager.saveGame();
+            });
+
+        // Add Go to Galaxy Map button
+        const galaxyMapButton = this.add.text(10, 240, 'Go to Galaxy Map', { fontSize: '24px', fill: '#0ff' })
+            .setInteractive()
+            .on('pointerdown', () => {
+                this.scene.start('GalaxyMap'); // Transition to GalaxyMap scene
+            });
     }
 
     update(time, delta) {
